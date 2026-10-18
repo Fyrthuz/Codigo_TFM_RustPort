@@ -3,29 +3,31 @@
 [![Rust](https://img.shields.io/badge/rust-1.99+-orange.svg)](https://www.rust-lang.org/)
 [![tch-rs](https://img.shields.io/badge/tch--rs-0.26-red.svg)](https://github.com/LaurentMazare/tch-rs)
 [![libtorch](https://img.shields.io/badge/libtorch-2.13.0+cu130-green.svg)](https://pytorch.org)
+[![Repo](https://img.shields.io/badge/GitHub-Fyrthuz%2FCodigo__TFM__RustPort-blue.svg)](https://github.com/Fyrthuz/Codigo_TFM_RustPort)
 
 Reimplementación completa en **Rust** (crate `tch-rs` sobre libtorch) del TFM
 original en Python: *segmentation of brain MRI (LGG) with uncertainty
 quantification*, comparando **UNet 2D** y **UniVerSeg few-shot** con métodos de
 incertidumbre (MC Dropout, TTA, Noisy, Fusion, CRF) y split a nivel de paciente.
 
-La versión Python original vive en `~/Desktop/Codigo_TFM` y no se modifica; este
-repositorio es independiente. Véase `PLAN_rust_port.md` para las fases del port.
+La versión Python original vive en
+[`Fyrthuz/Codigo_TFM`](https://github.com/Fyrthuz/Codigo_TFM) y no se modifica;
+este repositorio es independiente.
 
 ---
 
 ## Resultados (Rust, RTX 5080, CUDA)
 
-### UNet 2D — 144 imágenes de test
+### UNet 2D — 144 imágenes de test (`--train-mode`, reproduce el original)
 
 | Método | IoU | Dice | NLL | NLL_fg | ECE |
 |--------|----:|-----:|----:|-------:|----:|
-| normal | 0.834 | 0.898 | 0.030 | 0.311 | 0.013 |
-| mc_dropout | 0.825 | 0.888 | 0.036 | 0.350 | 0.018 |
-| tta | 0.722 | 0.808 | 0.034 | 0.586 | 0.019 |
-| noisy | 0.832 | 0.895 | 0.030 | 0.323 | 0.013 |
-| fusion | 0.829 | 0.890 | 0.030 | 0.332 | 0.013 |
-| crf | 0.829 | 0.890 | 0.030 | 0.331 | 0.014 |
+| normal | 0.819 | 0.894 | 0.035 | 0.177 | 0.015 |
+| mc_dropout | 0.819 | 0.894 | 0.039 | 0.173 | 0.020 |
+| tta | 0.797 | 0.880 | 0.041 | 0.354 | 0.025 |
+| noisy | 0.820 | 0.894 | 0.034 | 0.171 | 0.015 |
+| fusion | 0.825 | 0.898 | 0.034 | 0.172 | 0.017 |
+| crf | 0.826 | 0.899 | 0.034 | 0.171 | 0.017 |
 
 ### UniVerSeg (canal G T1c, contexto 64)
 
@@ -79,8 +81,8 @@ cargo build --release -p app --bins
 # Estadística a nivel de paciente (bootstrap + Wilcoxon exacto)
 ./scripts/run.sh ./target/release/statistics --pipeline all
 
-# Figuras (docs/*.png, matplotlib desde el .venv original)
-../Codigo_TFM/.venv/bin/python scripts/make_figures.py \
+# Figuras (docs/*.png, matplotlib; requiere el .venv del repo Python original)
+python scripts/make_figures.py \
     --results-dir ./results --foundation-results-dir ./results_foundation_universeg --out-dir ./docs
 
 # Entrenar UNet (opcional; pesos ya incluidos en unet_model.safetensors)
@@ -220,7 +222,7 @@ cargo test --workspace    # 61 tests (57 core + 4 modelos numéricos vs TorchScr
 
 - Rust ≥1.99, libtorch 2.13.0+cu130 (vendored en `./libtorch`) para `crates/app`
 - CUDA ≥12.8 (GPU Blackwell sm_120); `crates/core` compila y testea sin CUDA
-- La versión Python original (solo para exportar pesos) usa torch ≥2.5 en `~/Desktop/Codigo_TFM`
+- La versión Python original (solo para exportar pesos y generar figuras) usa torch ≥2.5; ver [`Fyrthuz/Codigo_TFM`](https://github.com/Fyrthuz/Codigo_TFM)
 
 ## Citation
 
