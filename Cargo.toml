@@ -18,7 +18,6 @@ ndarray = "0.16"
 image = { version = "0.25", default-features = false, features = ["png", "tiff", "jpeg"] }
 clap = { version = "4", features = ["derive"] }
 tch = "0.26"
-plotters = "0.3"
 
 [profile.release]
 opt-level = 3

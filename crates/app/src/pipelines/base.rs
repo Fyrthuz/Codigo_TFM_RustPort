@@ -347,8 +347,6 @@ pub fn finalize(
 
     save_metrics_csv(&mean_results, &active_methods, &active_metrics, vd, "metrics_summary.csv");
     save_detailed_metrics_csv(overall_metrics, &active_methods, &active_metrics, vd, "detailed_metrics.csv");
-    crate::viz::plot_metrics_comparison(&mean_results, &active_methods, &active_metrics, vd);
-    crate::viz::plot_box_comparison(overall_metrics, &active_methods, &active_metrics, vd);
 
     println!("\nOverall Metrics:");
     for method in &active_methods {

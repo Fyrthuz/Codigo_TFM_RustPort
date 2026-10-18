@@ -59,8 +59,7 @@ Distribución de métricas por método (box + jitter):
 
 Tests pareados a nivel de paciente (bootstrap por clusters + Wilcoxon):
 
-![Forest plot UNet](docs/statistical_summary_unet.png)
-![Forest plot UniVerSeg](docs/statistical_summary_universeg.png)
+![Forest plot UNet y UniVerSeg](docs/statistical_summary.png)
 
 ---
 
@@ -79,9 +78,9 @@ cargo build --release -p app --bins
 # Estadística a nivel de paciente (bootstrap + Wilcoxon exacto)
 ./scripts/run.sh ./target/release/statistics --pipeline all
 
-# Figuras (docs/*.png)
-./scripts/run.sh ./target/release/make_figures --results-dir ./results --out-dir ./docs --tag unet
-./scripts/run.sh ./target/release/make_figures --results-dir ./results_foundation_universeg --out-dir ./docs --tag universeg --sample-prefix test_
+# Figuras (docs/*.png, matplotlib desde el .venv original)
+../Codigo_TFM/.venv/bin/python scripts/make_figures.py \
+    --results-dir ./results --foundation-results-dir ./results_foundation_universeg --out-dir ./docs
 
 # Entrenar UNet (opcional; pesos ya incluidos en unet_model.safetensors)
 ./scripts/run.sh ./target/release/train_unet --data-root ./MRI/filtered_data --epochs 60
@@ -181,15 +180,15 @@ arriba. p-valores coinciden **bit a bit** con scipy (método exacto, n≤25).
 │       │   ├── uncertainty/        ─ mc_dropout.rs, tta.rs, noise.rs
 │       │   ├── pipelines/          ─ base.rs (orquestación + guardado)
 │       │   ├── tensor_util.rs      ─ tensor↔ndarray, carga TIFF/PNG
-│       │   ├── viz.rs              ─ plotters (barras, box, forest, paneles)
-│       │   └── bin/                ─ run_unet, run_foundation, train_unet, statistics, make_figures
+│       │   └── bin/                ─ run_unet, run_foundation, train_unet, statistics
 │       └── tests/                  ─ 4 tests numéricos (forward vs TorchScript < 1e-5)
 ├── configs/                        ─ YAML (pipeline_2d, foundation_universeg, *_4pct)
 ├── scripts/
 │   ├── run.sh                      ─ wrapper LD_PRELOAD/libtorch para CUDA
 │   ├── download_data.sh            ─ descarga del dataset
 │   ├── export_safetensors.py       ─ UNet/UniVerSeg → .safetensors (desde el .venv original)
-│   └── export_torchscript.py       ─ traza ambos → .pt (referencia para tests numéricos)
+│   ├── export_torchscript.py       ─ traza ambos → .pt (referencia para tests numéricos)
+│   └── make_figures.py             ─ figuras del README (matplotlib, desde el .venv original)
 ├── docs/                           ─ figuras (paneles cualitativos, distribuciones, forest)
 ├── libtorch/                       ─ libtorch 2.13.0+cu130 vendored (gitignored, ~1 GB)
 ├── MRI/filtered_data/              ─ dataset filtrado (1%, ~1060 imágenes, 108 pacientes)

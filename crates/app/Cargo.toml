@@ -14,5 +14,4 @@ rand.workspace = true
 ndarray.workspace = true
 image.workspace = true
 clap.workspace = true
-plotters.workspace = true
 tch.workspace = true
