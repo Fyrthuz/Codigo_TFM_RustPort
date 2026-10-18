@@ -1,0 +1,18 @@
+[package]
+name = "app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+tfm-core = { path = "../core" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+csv.workspace = true
+rand.workspace = true
+ndarray.workspace = true
+image.workspace = true
+clap.workspace = true
+plotters.workspace = true
+tch.workspace = true

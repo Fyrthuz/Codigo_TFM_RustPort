@@ -1,0 +1,6 @@
+[env]
+# libtorch 2.13.0 (CUDA 13.0) — vendored in ./libtorch (gitignored, ~1 GB).
+# See PLAN_rust_port.md Fase 0. Override with `export LIBTORCH=...` if installed elsewhere.
+LIBTORCH = "/home/fyrthuz/Desktop/Codigo_TFM_rust/libtorch"
+# Avoid linking fontconfig at build time (only used by plotters for figures).
+RUST_FONTCONFIG_DLOPEN = "1"
