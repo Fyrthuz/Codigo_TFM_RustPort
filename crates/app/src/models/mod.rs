@@ -7,7 +7,7 @@ use self::unet::Unet;
 use self::universeg::UniverSeg;
 
 pub enum Segmenter {
-    Unet { model: Unet },
+    Unet { model: Unet, train_mode: bool },
     UniverSeg {
         model: UniverSeg,
         support_images: Tensor,
@@ -19,7 +19,7 @@ pub enum Segmenter {
 impl Segmenter {
     pub fn forward(&self, image: &Tensor, mc_p: f64) -> Tensor {
         match self {
-            Segmenter::Unet { model } => model.forward(image, false, mc_p),
+            Segmenter::Unet { model, train_mode } => model.forward(image, *train_mode, mc_p),
             Segmenter::UniverSeg {
                 model,
                 support_images,

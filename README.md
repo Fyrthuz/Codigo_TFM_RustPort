@@ -69,7 +69,8 @@ Tests pareados a nivel de paciente (bootstrap por clusters + Wilcoxon):
 # Build (libtorch 2.13.0+cu130 vendored en ./libtorch; ver .cargo/config.toml)
 cargo build --release -p app --bins
 
-# UNet (144 test)
+# UNet (144 test) — por defecto en modo evaluación; añade --train-mode para
+# reproducir los CSVs versionados bit a bit (el original omitía model.eval())
 ./scripts/run.sh ./target/release/run_unet --config configs/pipeline_2d.yaml
 
 # UniVerSeg few-shot (contexto 64) — support + test
@@ -156,9 +157,22 @@ Frente a los CSVs versionados:
 
 El port de **UniVerSeg coincide casi exactamente** (Dice ~1 %, ECE ~5e-4,
 máscaras idénticas: MAE 0.00000). El **UNet difiere más** porque el
-`run_unet.py` original omite `model.eval()` (BatchNorm en modo entrenamiento) y
-usa un checkpoint más antiguo que el versionado. Con `eval()`, el port reproduce
-Python bit a bit (ej.: Dice muestra 2 = `0.8221635883905013` en ambos).
+`run_unet.py` original omite `model.eval()` (BatchNorm en modo entrenamiento).
+
+Para reproducir los CSVs versionados **bit a bit**, `run_unet` tiene el flag
+`--train-mode`, que deja la BatchNorm en modo entrenamiento igual que el
+original:
+
+```bash
+./scripts/run.sh ./target/release/run_unet --config configs/pipeline_2d.yaml --train-mode
+```
+
+Con `--train-mode` los métodos deterministas (`normal`, `tta`) coinciden **bit a
+bit** con los CSVs versionados (ej.: Dice normal 0.893844, p de "fusion vs
+normal" 1.526e-05), y los estocásticos (`mc_dropout`/`noisy`/`fusion`/`crf`)
+dentro del ruido de las 30 muestras (~1e-3 de Dice). Por defecto el port usa
+modo evaluación (comportamiento correcto): con `eval()`, Rust reproduce Python
+bit a bit (ej.: Dice muestra 2 = `0.8221635883905013` en ambos).
 
 ## Estadística
 

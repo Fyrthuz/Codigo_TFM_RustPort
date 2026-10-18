@@ -19,6 +19,10 @@ struct Args {
     checkpoint: String,
     #[clap(long, default_value = "test_indices.json")]
     test_indices: String,
+    /// BatchNorm en modo entrenamiento (reproduce el `run_unet.py` original, que
+    /// omite `model.eval()`). Por defecto usa modo evaluación.
+    #[clap(long)]
+    train_mode: bool,
 }
 
 fn main() {
@@ -47,7 +51,7 @@ fn main() {
     } else {
         println!("Warning: checkpoint {} not found, using untrained model", args.checkpoint);
     }
-    let seg = Segmenter::Unet { model };
+    let seg = Segmenter::Unet { model, train_mode: args.train_mode };
 
     let mut n_samples = pairs.len();
     if let Some(ss) = config.subset.subset_size {
